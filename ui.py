@@ -22,3 +22,25 @@ class Button:
             self.color = self.original_color
 
         return False
+
+class Slider:
+    def __init__(self, x, y, w, h, val=0.5):
+        self.rect = pygame.Rect(x, y, w, h)
+        self.circle_x = x + int(w * val)
+        self.val = val
+        self.dragging = False
+    def draw(self, surface):
+        pygame.draw.line(surface, (0, 0, 0), (self.rect.x, self.rect.centery), (self.rect.right, self.rect.centery), 4)
+        pygame.draw.circle(surface, (100, 149, 237), (self.circle_x, self.rect.centery), 10)
+
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and ((event.pos[0] - self.circle_x) ** 2 + (event.pos[1] - self.rect.centery) ** 2 ) ** 0.5 < 15:
+            self.dragging = True
+        elif event.type == pygame.MOUSEBUTTONUP:
+            self.dragging = False
+
+        if self.dragging and event.type == pygame.MOUSEMOTION:
+            self.circle_x = max(self.rect.left, min(event.pos[0], self.rect.right))
+            self.val = (self.circle_x - self.rect.x) / self.rect.width
+            return True
+        return False
